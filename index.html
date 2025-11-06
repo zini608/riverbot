@@ -2,62 +2,93 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>RiverBot 수거율 모니터</title>
+  <title>RiverBot 대시보드</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.min.js"></script>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 </head>
 <body>
+  <h1>🌊 RiverBot 실시간 대시보드</h1>
+
   <div class="container">
-    <h1>🌊 RiverBot 실시간 수거율</h1>
-    <p id="status">MQTT 연결 중...</p>
-    <div id="value">0%</div>
-    <p id="alert"></p>
+    <!-- YOLO 인식률 -->
+    <div class="card">
+      <h2>YOLO 인식률</h2>
+      <div class="progress-bar">
+        <div class="progress-fill" id="yolo-bar"></div>
+      </div>
+      <p id="yolo-value">0%</p>
+    </div>
+
+    <!-- 플라스틱 -->
+    <div class="card">
+      <h2>플라스틱 수거망</h2>
+      <div class="gauge">
+        <div class="gauge-inner">
+          <div id="plastic">0%</div>
+          <p>현재 수거율</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 일반 쓰레기 -->
+    <div class="card">
+      <h2>일반 쓰레기 수거망</h2>
+      <div class="gauge">
+        <div class="gauge-inner">
+          <div id="general">0%</div>
+          <p>현재 수거율</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 금속 -->
+    <div class="card">
+      <h2>금속 수거망</h2>
+      <div class="gauge">
+        <div class="gauge-inner">
+          <div id="metal">0%</div>
+          <p>현재 수거율</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    // ✅ HiveMQ WebSocket 설정
-    const broker = "broker.hivemq.com";
-    const port = 8000;
-    const topic = "riverbot/#"; // ESP32에서 보낸 토픽
-    const clientId = "webClient_" + Math.floor(Math.random() * 10000);
+    const client = mqtt.connect("wss://broker.hivemq.com:8000/mqtt");
+    client.on("connect", () => {
+      console.log("✅ MQTT Connected");
+      client.subscribe("riverbot/bin");
+    });
 
-    const client = new Paho.MQTT.Client(broker, Number(port), clientId);
-
-    client.onConnectionLost = (res) => {
-      document.getElementById("status").innerText = "❌ 연결 끊김";
-      console.log("연결 끊김:", res.errorMessage);
-    };
-
-    client.onMessageArrived = (msg) => {
-      console.log("📩 수신:", msg.payloadString);
+    client.on("message", (topic, message) => {
       try {
-        const data = JSON.parse(msg.payloadString);
-        if (data.collection !== undefined) {
-          document.getElementById("value").innerText = data.collection.toFixed(1) + "%";
-        }
-        if (data.alert) {
-          document.getElementById("alert").innerText = data.alert;
-        } else {
-          document.getElementById("alert").innerText = "";
-        }
-      } catch (e) {
-        console.error("JSON 파싱 오류:", e);
-      }
-    };
+        const data = JSON.parse(message.toString());
+        console.log("📩 수신:", data);
 
-    client.connect({
-      useSSL: false,
-      onSuccess: () => {
-        document.getElementById("status").innerText = "✅ 연결 성공";
-        console.log("✅ HiveMQ 연결 성공");
-        client.subscribe(topic);
-      },
-      onFailure: (err) => {
-        document.getElementById("status").innerText = "❌ 연결 실패";
-        console.error("❌ 연결 실패:", err.errorMessage);
+        // YOLO 인식률
+        const yolo = parseFloat(data.yolo || 0).toFixed(1);
+        document.getElementById("yolo-bar").style.width = `${yolo}%`;
+        document.getElementById("yolo-value").innerText = `${yolo}%`;
+
+        // 플라스틱
+        const plastic = parseFloat(data.plastic || 0).toFixed(1);
+        document.getElementById("plastic").innerText = `${plastic}%`;
+        document.getElementById("plastic").parentElement.parentElement.style.background = `conic-gradient(#4CAF50 ${plastic}%, #ddd 0)`;
+
+        // 일반
+        const general = parseFloat(data.general || 0).toFixed(1);
+        document.getElementById("general").innerText = `${general}%`;
+        document.getElementById("general").parentElement.parentElement.style.background = `conic-gradient(#2196F3 ${general}%, #ddd 0)`;
+
+        // 금속
+        const metal = parseFloat(data.metal || 0).toFixed(1);
+        document.getElementById("metal").innerText = `${metal}%`;
+        document.getElementById("metal").parentElement.parentElement.style.background = `conic-gradient(#FF9800 ${metal}%, #ddd 0)`;
+
+      } catch (e) {
+        console.error(e);
       }
     });
   </script>
 </body>
 </html>
-

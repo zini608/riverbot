@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>RiverBot 실시간 대시보드</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.min.js"></script>
 </head>
@@ -16,6 +16,7 @@
     <canvas id="gauge"></canvas>
     <div id="percent">0%</div>
     <div class="alert" id="alertBox"></div>
+    <div id="status">🕓 연결 상태: <span id="conn">연결 중...</span></div>
   </main>
 
   <footer>
@@ -23,12 +24,13 @@
   </footer>
 
   <script>
-    // ✅ WebSocket MQTT 연결 설정
-    const brokerUrl = 'wss://damoa.io:9002';
-    const topic = 'riverbot/#';
-    const clientID = "webclient_" + Math.floor(Math.random() * 10000);
+    // ✅ MQTT 브로커 WebSocket 주소 (중요!)
+    const broker = "damoa.io";
+    const port = 9002;
+    const topic = "riverbot/#";
+    const clientId = "webClient_" + Math.floor(Math.random() * 10000);
 
-    // 게이지 설정
+    // ✅ 게이지 설정
     const opts = {
       angle: 0.15,
       lineWidth: 0.3,
@@ -47,33 +49,46 @@
     gauge.animationSpeed = 32;
     gauge.set(0);
 
-    // MQTT 클라이언트 설정
-    const client = new Paho.MQTT.Client("damoa.io", 9002, clientID);
+    // ✅ MQTT 연결
+    const client = new Paho.MQTT.Client(broker, port, clientId);
 
-    client.onConnectionLost = (response) => console.log("❌ 연결 끊김:", response.errorMessage);
+    client.onConnectionLost = (response) => {
+      document.getElementById("conn").innerText = "❌ 연결 끊김";
+      console.log("연결 끊김:", response.errorMessage);
+    };
+
     client.onMessageArrived = (message) => {
       console.log("📩 수신:", message.payloadString);
-      const data = JSON.parse(message.payloadString);
-
-      if (data.collection !== undefined) {
-        gauge.set(data.collection);
-        document.getElementById("percent").innerText = data.collection.toFixed(1) + "%";
-      }
-
-      if (data.alert !== undefined) {
-        document.getElementById("alertBox").innerText = data.alert;
-      } else {
-        document.getElementById("alertBox").innerText = "";
+      try {
+        const data = JSON.parse(message.payloadString);
+        if (data.collection !== undefined) {
+          gauge.set(data.collection);
+          document.getElementById("percent").innerText = data.collection.toFixed(1) + "%";
+        }
+        if (data.alert !== undefined) {
+          document.getElementById("alertBox").innerText = data.alert;
+        } else {
+          document.getElementById("alertBox").innerText = "";
+        }
+      } catch (e) {
+        console.log("❗ JSON 파싱 오류:", e);
       }
     };
 
+    // ✅ 연결 시도
     client.connect({
+      useSSL: false,
       onSuccess: () => {
+        document.getElementById("conn").innerText = "✅ 연결 성공";
         console.log("✅ damoa.io WebSocket 연결 성공");
         client.subscribe(topic);
       },
-      useSSL: false
+      onFailure: (err) => {
+        document.getElementById("conn").innerText = "❌ 연결 실패";
+        console.error("❌ 연결 실패:", err.errorMessage);
+      }
     });
   </script>
 </body>
 </html>
+

@@ -1,50 +1,43 @@
 body {
-  font-family: 'Pretendard', sans-serif;
-  background: #f5f8fa;
-  color: #333;
+  background-color: #f5f7fa;
+  font-family: "Pretendard", sans-serif;
+  color: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
   text-align: center;
-  padding: 40px;
-}
-
-header h1 {
-  font-size: 28px;
-  margin-bottom: 40px;
-}
-
-main {
   background: white;
-  width: 400px;
-  margin: auto;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 50px 80px;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-canvas {
-  width: 300px;
-  height: 160px;
-}
-
-#percent {
-  font-size: 24px;
-  font-weight: 600;
-  margin-top: 20px;
-}
-
-#alertBox {
-  margin-top: 10px;
-  color: red;
-  font-weight: 600;
+h1 {
+  font-size: 26px;
+  margin-bottom: 30px;
+  color: #0077ff;
 }
 
 #status {
-  margin-top: 20px;
-  font-size: 14px;
+  font-size: 16px;
+  margin-bottom: 10px;
   color: #666;
 }
 
-footer {
-  margin-top: 40px;
-  font-size: 12px;
-  color: #888;
+#value {
+  font-size: 80px;
+  font-weight: bold;
+  color: #0077ff;
+}
+
+#alert {
+  color: red;
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 20px;
 }

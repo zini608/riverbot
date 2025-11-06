@@ -1,71 +1,78 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>RiverBot 대시보드</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <meta charset="UTF-8">
+  <title>RiverBot 실시간 대시보드</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.min.js"></script>
 </head>
 <body>
-  <h1>RiverBot 대시보드</h1>
-  <div class="container">
-    <div class="card">
-      <h2>인식된 쓰레기</h2>
-      <img src="bottle.jpg" alt="Detected Trash" />
-      <p><b>현재 인식 중:</b> 플라스틱 병</p>
-    </div>
+  <header>
+    <h1>🌊 RiverBot 실시간 수거 상태</h1>
+  </header>
 
-    <div class="card">
-      <h2>수거망 상태</h2>
-      <div class="gauge">
-        <div class="gauge-inner">
-          <div id="fullness">0%</div>
-          <p>현재 수거량</p>
-        </div>
-      </div>
-      <div class="footer">
-        <h3>YOLO 인식률</h3>
-        <p id="yolo">98%</p>
-      </div>
-    </div>
-  </div>
+  <main>
+    <canvas id="gauge"></canvas>
+    <div id="percent">0%</div>
+    <div class="alert" id="alertBox"></div>
+  </main>
 
-  <div id="alertBox" class="alert-box">⚠ 수거망이 85% 이상 찼습니다!</div>
+  <footer>
+    <p>Connected to <strong>damoa.io</strong> via WebSocket (wss://damoa.io:9002)</p>
+  </footer>
 
   <script>
-    // MQTT 연결 (HiveMQ WebSocket)
-    const client = mqtt.connect("wss://broker.hivemq.com:8000/mqtt");
+    // ✅ WebSocket MQTT 연결 설정
+    const brokerUrl = 'wss://damoa.io:9002';
+    const topic = 'riverbot/#';
+    const clientID = "webclient_" + Math.floor(Math.random() * 10000);
 
-    const fullnessElem = document.getElementById("fullness");
-    const gauge = document.querySelector(".gauge");
-    const alertBox = document.getElementById("alertBox");
+    // 게이지 설정
+    const opts = {
+      angle: 0.15,
+      lineWidth: 0.3,
+      radiusScale: 1,
+      pointer: { length: 0.6, strokeWidth: 0.04, color: '#000' },
+      colorStart: '#6FADCF',
+      colorStop: '#8FC0DA',
+      strokeColor: '#E0E0E0',
+      generateGradient: true,
+      highDpiSupport: true
+    };
+    const target = document.getElementById('gauge');
+    const gauge = new Gauge(target).setOptions(opts);
+    gauge.maxValue = 100;
+    gauge.setMinValue(0);
+    gauge.animationSpeed = 32;
+    gauge.set(0);
 
-    client.on("connect", () => {
-      console.log("✅ HiveMQ MQTT Connected");
-      client.subscribe("riverbot/bin");
-      client.subscribe("riverbot/alert");
-    });
+    // MQTT 클라이언트 설정
+    const client = new Paho.MQTT.Client("damoa.io", 9002, clientID);
 
-    client.on("message", (topic, message) => {
-      console.log(`📩 받은 메시지: ${topic} → ${message}`);
-      try {
-        const data = JSON.parse(message.toString());
-        if (topic === "riverbot/bin" && data.collection !== undefined) {
-          const val = parseFloat(data.collection).toFixed(1);
-          fullnessElem.innerText = `${val}%`;
-          gauge.style.background = `conic-gradient(#4CAF50 ${val}%, #ddd ${val}%)`;
-        }
-        if (topic === "riverbot/alert") {
-          alertBox.style.display = "block";
-          setTimeout(() => { alertBox.style.display = "none"; }, 4000);
-        }
-      } catch (err) {
-        console.error("❌ 데이터 파싱 오류:", err);
+    client.onConnectionLost = (response) => console.log("❌ 연결 끊김:", response.errorMessage);
+    client.onMessageArrived = (message) => {
+      console.log("📩 수신:", message.payloadString);
+      const data = JSON.parse(message.payloadString);
+
+      if (data.collection !== undefined) {
+        gauge.set(data.collection);
+        document.getElementById("percent").innerText = data.collection.toFixed(1) + "%";
       }
-    });
 
-    client.on("error", (err) => {
-      console.error("MQTT 연결 오류:", err);
+      if (data.alert !== undefined) {
+        document.getElementById("alertBox").innerText = data.alert;
+      } else {
+        document.getElementById("alertBox").innerText = "";
+      }
+    };
+
+    client.connect({
+      onSuccess: () => {
+        console.log("✅ damoa.io WebSocket 연결 성공");
+        client.subscribe(topic);
+      },
+      useSSL: false
     });
   </script>
 </body>

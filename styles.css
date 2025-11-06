@@ -1,89 +1,94 @@
 body {
   font-family: 'Noto Sans KR', sans-serif;
-  background-color: #f6f9fc;
+  background-color: #f5f8fb;
   text-align: center;
   margin: 0;
-  padding: 20px;
-}
-
-.container {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
-  margin-top: 30px;
-}
-
-.card {
-  width: 320px;
-  background: #fff;
-  padding: 25px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  padding: 30px;
 }
 
 h1 {
-  color: #333;
-  font-size: 30px;
+  color: #0a2540;
+  font-size: 28px;
+  margin-bottom: 40px;
 }
 
-h2 {
-  color: #0077ff;
-  margin-bottom: 20px;
+.dashboard {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 40px;
 }
 
-/* --- YOLO Progress Bar --- */
-.progress-bar {
-  width: 100%;
-  height: 25px;
-  background: #ddd;
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 10px;
+.card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  width: 320px;
+  padding: 30px;
+  transition: transform 0.2s;
 }
 
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #4CAF50, #81C784);
-  transition: width 0.4s ease;
+.card:hover {
+  transform: translateY(-5px);
 }
 
-#yolo-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
+.card h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0a2540;
+  margin-bottom: 25px;
 }
 
-/* --- Gauge --- */
+/* 게이지 */
 .gauge {
   position: relative;
   width: 180px;
   height: 180px;
   border-radius: 50%;
-  background: conic-gradient(#ddd 0%, #ddd 0);
+  margin: 0 auto 20px;
+  background: conic-gradient(var(--color) calc(var(--val) * 1%), #e0e0e0 0);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 20px auto;
 }
 
 .gauge-inner {
   position: absolute;
   width: 140px;
   height: 140px;
-  background: white;
+  background: #fff;
   border-radius: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  color: #333;
-  font-size: 22px;
 }
 
-p {
-  margin: 0;
+.percent {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+}
+
+.gauge-inner p {
+  margin: 4px 0 0 0;
+  font-size: 15px;
+  color: #555;
+}
+
+/* YOLO 인식률 */
+.yolo {
+  margin-top: 10px;
+}
+
+.yolo p {
+  margin: 4px 0;
+  font-weight: 600;
   color: #666;
+}
+
+.yolo-val {
+  font-size: 22px;
+  font-weight: 700;
+  color: #4CAF50;
 }

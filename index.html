@@ -14,8 +14,14 @@
   <div class="main-wrapper">
     <!-- 왼쪽 -->
     <section class="left-panel">
-      <h2>현재 인식 중: <span class="highlight">플라스틱</span></h2>
-      <img id="trashImage" src="KakaoTalk_20251107_031923454.jpg" alt="플라스틱 쓰레기" class="trash-photo" onclick="toggleImage()">
+      <h2 id="detect-title">현재 인식 중: <span class="highlight" id="trash-type">플라스틱</span></h2>
+      
+      <!-- 초기 플라스틱 이미지 -->
+      <img id="trashImage" 
+           src="ntr202309190020.680x.0.jpg" 
+           alt="플라스틱 쓰레기" 
+           class="trash-photo"
+           onclick="toggleTrashType()">
 
       <!-- 그래프 -->
       <div class="graph-container">
@@ -23,9 +29,11 @@
         <canvas id="plasticChart"></canvas>
       </div>
 
-      <!-- GPS 정보 -->
-      <div class="gps-box">
+      <!-- GPS 지도 -->
+      <div class="gps-container">
+        <h3>GPS 위치 정보</h3>
         <div class="map-area">
+          <img src="1234.png" alt="지도 배경" class="map-background">
           <div class="map-pin"></div>
         </div>
         <p class="gps-text">현재 위치&nbsp;&nbsp;X: 4.2&nbsp;&nbsp;Y: 1.8</p>
@@ -84,7 +92,7 @@
         labels: ['06시','08시','10시','12시','14시','16시','18시','20시','22시'],
         datasets: [{
           label: '수거량 (톤)',
-          data: [20,30,24,45,53],
+          data: [20, 30, 24, 45, 53],
           fill: true,
           borderColor: '#4CAF50',
           backgroundColor: 'rgba(76,175,80,0.1)',
@@ -96,19 +104,25 @@
       options: {
         responsive: true,
         scales: {
-          x: { title: { display: true, text: '시간', color:'#555' }, grid:{color:'#eee'} },
-          y: { title: { display: true, text: '수거량 (톤)', color:'#555' }, beginAtZero:true, grid:{color:'#eee'} }
+          x: { title: { display: true, text: '시간', color:'#555' }, grid:{ color:'#eee' } },
+          y: { title: { display: true, text: '수거량 (톤)', color:'#555' }, beginAtZero:true, grid:{ color:'#eee' } }
         },
-        plugins: { legend:{display:false} }
+        plugins: { legend:{ display:false } }
       }
     });
 
-    // 이미지 토글
-    function toggleImage() {
+    // 클릭 시 사진 + 텍스트 변경
+    function toggleTrashType() {
       const img = document.getElementById('trashImage');
-      img.src = img.src.includes('_01') 
-        ? 'KakaoTalk_20251107_031923454.jpg' 
-        : 'KakaoTalk_20251107_031923454_01.jpg';
+      const typeText = document.getElementById('trash-type');
+
+      if (img.src.includes('ntr202309190020')) {
+        img.src = 'KakaoTalk_20251107_031923454.jpg';
+        typeText.textContent = '일반쓰레기';
+      } else {
+        img.src = 'ntr202309190020.680x.0.jpg';
+        typeText.textContent = '플라스틱';
+      }
     }
   </script>
 </body>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>RiverBot 대시보드</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 </head>
 <body>
@@ -33,14 +33,14 @@
   <div id="alertBox" class="alert-box">⚠ 수거망이 85% 이상 찼습니다!</div>
 
   <script>
-    // ===== MQTT 연결 =====
-    const client = mqtt.connect("wss://damoa.io:9001"); // MQTT over WebSocket
+    // HiveMQ WebSocket 브로커로 연결
+    const client = mqtt.connect("wss://broker.hivemq.com:8000/mqtt");
     const fullnessElem = document.getElementById("fullness");
     const gauge = document.querySelector(".gauge");
     const alertBox = document.getElementById("alertBox");
 
     client.on("connect", () => {
-      console.log("✅ MQTT Connected");
+      console.log("✅ MQTT Connected to HiveMQ");
       client.subscribe("riverbot/bin");
       client.subscribe("riverbot/alert");
     });
@@ -48,26 +48,20 @@
     client.on("message", (topic, message) => {
       try {
         const data = JSON.parse(message.toString());
-
-        // 수거량 업데이트
         if (topic === "riverbot/bin") {
           const val = parseFloat(data.collection || 0).toFixed(1);
           fullnessElem.innerText = `${val}%`;
           gauge.style.background = `conic-gradient(#4CAF50 ${val}%, #ddd 0)`;
-        }
-
-        // 경고 메시지 수신 시
-        else if (topic === "riverbot/alert") {
+        } else if (topic === "riverbot/alert") {
           alertBox.style.display = "block";
-          setTimeout(() => {
-            alertBox.style.display = "none";
-          }, 5000);
+          setTimeout(() => { alertBox.style.display = "none"; }, 5000);
         }
-
       } catch (e) {
-        console.error("데이터 파싱 오류:", e);
+        console.error("❌ 데이터 파싱 오류:", e);
       }
     });
+
+    client.on("error", err => console.error("MQTT 연결 실패:", err));
   </script>
 </body>
 </html>

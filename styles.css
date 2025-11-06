@@ -1,74 +1,99 @@
-/* 전체 레이아웃 */
+/* 기본 세팅 */
 body {
   font-family: 'Noto Sans KR', sans-serif;
   background: linear-gradient(180deg, #f0f4f8 0%, #e8eef5 100%);
   margin: 0;
   padding: 0;
+  color: #1a1a1a;
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #1a1a1a;
 }
 
-/* 헤더 */
 header {
   padding: 25px 0;
 }
 
 header h1 {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
   color: #0a2540;
   letter-spacing: -0.5px;
 }
 
-/* 대시보드 컨테이너 */
-.dashboard {
+/* 메인 레이아웃 */
+.main-container {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 25px;
+  align-items: flex-start;
+  gap: 40px;
   padding: 20px;
+  flex-wrap: wrap;
 }
 
-/* 카드 */
-.card {
-  width: 320px;
+/* 왼쪽 패널 */
+.left-panel {
   background: #fff;
   border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  padding: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  padding: 30px;
+  width: 360px;
   text-align: center;
-  transition: all 0.25s ease-in-out;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-}
-
-.card h2 {
-  font-size: 18px;
+.left-panel h2 {
+  font-size: 20px;
   font-weight: 700;
-  color: #0a2540;
-  margin-bottom: 15px;
-}
-
-/* 이미지 */
-.trash-img {
-  width: 100%;
-  border-radius: 12px;
   margin-bottom: 20px;
-  object-fit: cover;
+  color: #0a2540;
 }
 
-/* 원형 게이지 */
+.highlight {
+  color: #4CAF50;
+}
+
+.trash-photo {
+  width: 100%;
+  border-radius: 15px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* 오른쪽 패널 */
+.right-panel {
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  width: 380px;
+  padding: 25px;
+  gap: 25px;
+}
+
+/* 수거 상태 카드 */
+.status-card {
+  background: #f9fbfd;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.status-card h3 {
+  margin-bottom: 10px;
+  color: #0a2540;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* 게이지 */
 .gauge {
   position: relative;
-  width: 160px;
-  height: 160px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  margin: 0 auto 20px;
+  margin: 0 auto 10px;
   background: conic-gradient(var(--color) calc(var(--val) * 1%), #e0e0e0 0);
   display: flex;
   align-items: center;
@@ -77,8 +102,8 @@ header h1 {
 
 .gauge-inner {
   position: absolute;
-  width: 120px;
-  height: 120px;
+  width: 85px;
+  height: 85px;
   background: #fff;
   border-radius: 50%;
   display: flex;
@@ -88,38 +113,27 @@ header h1 {
 }
 
 .percent {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
   color: #333;
 }
 
 .gauge-inner p {
-  font-size: 14px;
-  margin: 5px 0 0;
+  font-size: 13px;
   color: #777;
 }
 
 /* YOLO 인식률 */
-.yolo {
-  border-top: 1px solid #eee;
-  padding-top: 10px;
-}
-
-.yolo p {
-  margin: 5px 0;
-  font-weight: 600;
-  color: #666;
-}
-
 .yolo-val {
-  font-size: 22px;
+  font-size: 28px;
   font-weight: 700;
   color: #4CAF50;
+  margin-top: 10px;
 }
 
 /* 푸터 */
 footer {
-  margin-top: 30px;
+  margin-top: 40px;
   padding: 10px 0;
   font-size: 13px;
   color: #777;

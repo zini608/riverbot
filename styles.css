@@ -1,49 +1,72 @@
+/* 전체 레이아웃 */
 body {
   font-family: 'Noto Sans KR', sans-serif;
-  background-color: #f5f8fb;
-  text-align: center;
+  background: linear-gradient(180deg, #f0f4f8 0%, #e8eef5 100%);
   margin: 0;
-  padding: 30px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #1a1a1a;
 }
 
-h1 {
+/* 헤더 */
+header {
+  padding: 25px 0;
+}
+
+header h1 {
+  font-size: 26px;
+  font-weight: 700;
   color: #0a2540;
-  font-size: 28px;
-  margin-bottom: 40px;
+  letter-spacing: -0.5px;
 }
 
+/* 대시보드 컨테이너 */
 .dashboard {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
-  gap: 40px;
+  justify-content: center;
+  gap: 25px;
+  padding: 20px;
 }
 
+/* 카드 */
 .card {
+  width: 320px;
   background: #fff;
   border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  width: 320px;
-  padding: 30px;
-  transition: transform 0.2s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  padding: 25px;
+  text-align: center;
+  transition: all 0.25s ease-in-out;
 }
 
 .card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
 }
 
 .card h2 {
   font-size: 18px;
   font-weight: 700;
   color: #0a2540;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 
-/* 게이지 */
+/* 이미지 */
+.trash-img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  object-fit: cover;
+}
+
+/* 원형 게이지 */
 .gauge {
   position: relative;
-  width: 180px;
-  height: 180px;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   margin: 0 auto 20px;
   background: conic-gradient(var(--color) calc(var(--val) * 1%), #e0e0e0 0);
@@ -54,8 +77,8 @@ h1 {
 
 .gauge-inner {
   position: absolute;
-  width: 140px;
-  height: 140px;
+  width: 120px;
+  height: 120px;
   background: #fff;
   border-radius: 50%;
   display: flex;
@@ -65,24 +88,25 @@ h1 {
 }
 
 .percent {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   color: #333;
 }
 
 .gauge-inner p {
-  margin: 4px 0 0 0;
-  font-size: 15px;
-  color: #555;
+  font-size: 14px;
+  margin: 5px 0 0;
+  color: #777;
 }
 
 /* YOLO 인식률 */
 .yolo {
-  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
 }
 
 .yolo p {
-  margin: 4px 0;
+  margin: 5px 0;
   font-weight: 600;
   color: #666;
 }
@@ -92,3 +116,12 @@ h1 {
   font-weight: 700;
   color: #4CAF50;
 }
+
+/* 푸터 */
+footer {
+  margin-top: 30px;
+  padding: 10px 0;
+  font-size: 13px;
+  color: #777;
+}
+

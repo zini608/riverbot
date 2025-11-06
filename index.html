@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>RiverBot 실시간 대시보드</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
 </head>
 <body>
   <header>
@@ -15,22 +15,21 @@
   <main>
     <canvas id="gauge"></canvas>
     <div id="percent">0%</div>
-    <div class="alert" id="alertBox"></div>
+    <div id="alertBox"></div>
     <div id="status">🕓 연결 상태: <span id="conn">연결 중...</span></div>
   </main>
 
   <footer>
-    <p>Connected to <strong>damoa.io</strong> via WebSocket (wss://damoa.io:9002)</p>
+    <p>Connected via HiveMQ WebSocket (wss://broker.hivemq.com:8000)</p>
   </footer>
 
   <script>
-    // ✅ MQTT 브로커 WebSocket 주소 (중요!)
-    const broker = "damoa.io";
-    const port = 9002;
+    const broker = "broker.hivemq.com";
+    const port = 8000;
     const topic = "riverbot/#";
     const clientId = "webClient_" + Math.floor(Math.random() * 10000);
 
-    // ✅ 게이지 설정
+    // 게이지 설정
     const opts = {
       angle: 0.15,
       lineWidth: 0.3,
@@ -49,7 +48,7 @@
     gauge.animationSpeed = 32;
     gauge.set(0);
 
-    // ✅ MQTT 연결
+    // MQTT 설정
     const client = new Paho.MQTT.Client(broker, port, clientId);
 
     client.onConnectionLost = (response) => {
@@ -75,12 +74,12 @@
       }
     };
 
-    // ✅ 연결 시도
+    // 연결
     client.connect({
       useSSL: false,
       onSuccess: () => {
         document.getElementById("conn").innerText = "✅ 연결 성공";
-        console.log("✅ damoa.io WebSocket 연결 성공");
+        console.log("✅ HiveMQ 연결 성공");
         client.subscribe(topic);
       },
       onFailure: (err) => {

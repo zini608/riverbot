@@ -61,11 +61,11 @@
         </div>
       </div>
 
-      <div class="status-card">
+      <div class="status-card" id="metal-card">
         <h3>금속 쓰레기 수거량</h3>
-        <div class="gauge" style="--val:28; --color:#FF9800;">
+        <div class="gauge" id="metal-gauge" style="--val:28; --color:#FF9800;">
           <div class="gauge-inner">
-            <div class="percent">28%</div>
+            <div class="percent" id="metal-percent">28%</div>
             <p>현재 수거율</p>
           </div>
         </div>
@@ -76,6 +76,15 @@
         <p class="yolo-val">98%</p>
       </div>
     </section>
+  </div>
+
+  <!-- 모달 -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h2>⚠️ 주의!</h2>
+      <p>쓰레기 가득 참</p>
+      <button onclick="closeModal()">확인</button>
+    </div>
   </div>
 
   <footer>
@@ -110,37 +119,74 @@
       }
     });
 
-    // === 클릭 시 이미지, 텍스트, 퍼센트, 게이지 변화 ===
-    let isPlastic = true;
+    // === 상태 ===
+    let currentStage = 0; 
+    // 0: 플라스틱, 1: 일반쓰레기, 2~4: 금속 단계
+
+    const img = document.getElementById('trashImage');
+    const typeText = document.getElementById('trash-type');
+    const trashGauge = document.getElementById('trash-gauge');
+    const trashPercent = document.getElementById('trash-percent');
+    const metalGauge = document.getElementById('metal-gauge');
+    const metalPercent = document.getElementById('metal-percent');
+    const modal = document.getElementById('modal');
+
+    const metalImages = [
+      "KakaoTalk_20251107_035742633.jpg",
+      "KakaoTalk_20251107_035742633_01.jpg",
+      "KakaoTalk_20251107_035742633_02.jpg"
+    ];
 
     function toggleTrashType() {
-      const img = document.getElementById('trashImage');
-      const typeText = document.getElementById('trash-type');
-      const percentElem = document.getElementById('trash-percent');
-      const gauge = document.getElementById('trash-gauge');
+      if (currentStage === 0) {
+        // 플라스틱 → 일반쓰레기
+        img.src = "KakaoTalk_20251107_031923454.jpg";
+        typeText.textContent = "일반쓰레기";
+        animateGaugeChange(trashPercent, trashGauge, 44, 46, '#2196F3');
+      } 
+      else if (currentStage === 1) {
+        // 일반쓰레기 → 금속 (1단계)
+        img.src = metalImages[0];
+        typeText.textContent = "금속쓰레기";
+        animateGaugeChange(metalPercent, metalGauge, 28, 48, '#FF9800');
+      } 
+      else if (currentStage === 2) {
+        // 금속 2단계
+        img.src = metalImages[1];
+        typeText.textContent = "금속쓰레기";
+        animateGaugeChange(metalPercent, metalGauge, 48, 68, '#FF9800');
+      } 
+      else if (currentStage === 3) {
+        // 금속 3단계
+        img.src = metalImages[2];
+        typeText.textContent = "금속쓰레기";
+        animateGaugeChange(metalPercent, metalGauge, 68, 88, '#FF9800');
 
-      if (isPlastic) {
-        img.src = 'KakaoTalk_20251107_031923454.jpg';
-        typeText.textContent = '일반쓰레기';
-        animateGaugeChange(percentElem, gauge, 44, 46, '#2196F3');
-      } else {
-        img.src = 'ntr202309190020.680x.0.jpg';
-        typeText.textContent = '플라스틱';
-        animateGaugeChange(percentElem, gauge, 46, 44, '#2196F3');
+        // 모달 띄우기 (2초 후)
+        setTimeout(() => {
+          modal.style.display = "flex";
+        }, 800);
+      } 
+      else if (currentStage >= 4) {
+        // 리셋 (처음으로)
+        img.src = "ntr202309190020.680x.0.jpg";
+        typeText.textContent = "플라스틱";
+        animateGaugeChange(metalPercent, metalGauge, 88, 28, '#FF9800');
+        animateGaugeChange(trashPercent, trashGauge, 46, 44, '#2196F3');
+        modal.style.display = "none";
+        currentStage = -1;
       }
 
-      isPlastic = !isPlastic;
+      currentStage++;
     }
 
-    // === 부드러운 수치 + 그래프 변화 ===
     function animateGaugeChange(elem, gauge, from, to, color) {
       let current = from;
-      const step = from < to ? 0.1 : -0.1;
+      const step = from < to ? 0.3 : -0.3;
       const interval = setInterval(() => {
         current += step;
         const rounded = Math.round(current * 10) / 10;
         elem.textContent = rounded.toFixed(1) + '%';
-        gauge.style.setProperty('--val', rounded);
         gauge.style.background = `conic-gradient(${color} ${rounded * 3.6}deg, #ddd 0deg)`;
 
         if ((step > 0 && current >= to) || (step < 0 && current <= to)) {
@@ -148,7 +194,11 @@
           gauge.style.background = `conic-gradient(${color} ${to * 3.6}deg, #ddd 0deg)`;
           clearInterval(interval);
         }
-      }, 25);
+      }, 20);
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
     }
   </script>
 </body>

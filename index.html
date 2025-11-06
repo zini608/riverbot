@@ -11,7 +11,7 @@
   <div class="container">
     <div class="card">
       <h2>인식된 쓰레기</h2>
-      <img src="ntr202309190020.680x.0.jpg" alt="Detected Trash">
+      <img src="bottle.jpg" alt="Detected Trash" />
       <p><b>현재 인식 중:</b> 플라스틱 병</p>
     </div>
 
@@ -33,35 +33,40 @@
   <div id="alertBox" class="alert-box">⚠ 수거망이 85% 이상 찼습니다!</div>
 
   <script>
-    // HiveMQ WebSocket 브로커로 연결
+    // MQTT 연결 (HiveMQ WebSocket)
     const client = mqtt.connect("wss://broker.hivemq.com:8000/mqtt");
+
     const fullnessElem = document.getElementById("fullness");
     const gauge = document.querySelector(".gauge");
     const alertBox = document.getElementById("alertBox");
 
     client.on("connect", () => {
-      console.log("✅ MQTT Connected to HiveMQ");
+      console.log("✅ HiveMQ MQTT Connected");
       client.subscribe("riverbot/bin");
       client.subscribe("riverbot/alert");
     });
 
     client.on("message", (topic, message) => {
+      console.log(`📩 받은 메시지: ${topic} → ${message}`);
       try {
         const data = JSON.parse(message.toString());
-        if (topic === "riverbot/bin") {
-          const val = parseFloat(data.collection || 0).toFixed(1);
+        if (topic === "riverbot/bin" && data.collection !== undefined) {
+          const val = parseFloat(data.collection).toFixed(1);
           fullnessElem.innerText = `${val}%`;
-          gauge.style.background = `conic-gradient(#4CAF50 ${val}%, #ddd 0)`;
-        } else if (topic === "riverbot/alert") {
-          alertBox.style.display = "block";
-          setTimeout(() => { alertBox.style.display = "none"; }, 5000);
+          gauge.style.background = `conic-gradient(#4CAF50 ${val}%, #ddd ${val}%)`;
         }
-      } catch (e) {
-        console.error("❌ 데이터 파싱 오류:", e);
+        if (topic === "riverbot/alert") {
+          alertBox.style.display = "block";
+          setTimeout(() => { alertBox.style.display = "none"; }, 4000);
+        }
+      } catch (err) {
+        console.error("❌ 데이터 파싱 오류:", err);
       }
     });
 
-    client.on("error", err => console.error("MQTT 연결 실패:", err));
+    client.on("error", (err) => {
+      console.error("MQTT 연결 오류:", err);
+    });
   </script>
 </body>
 </html>

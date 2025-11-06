@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RiverBot 대시보드</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>RiverBot 대시보드</h1>
+  </header>
+
+  <main class="container">
+    <!-- 왼쪽: 인식 이미지 + 현재 인식 중 -->
+    <section class="panel left">
+      <h2>인식된 쓰레기</h2>
+
+      <!-- 이미지만 바꾸면 됨 -->
+      <img class="detected-img" src="assets/trash_detected.jpg" alt="Detected trash" />
+
+      <p class="current-class">
+        <strong>현재 인식 중:</strong>
+        <span id="currentClass">플라스틱 병</span>
+      </p>
+    </section>
+
+    <!-- 오른쪽: 원형 게이지(수거망 충전율) -->
+    <section class="panel right">
+      <h2>수거망 상태</h2>
+
+      <!-- 경고 표시를 원하면 gauge에 warn 클래스를 추가 -->
+      <!-- 퍼센트를 바꾸려면 style="--val:87" 처럼 숫자만 수정 -->
+      <div class="gauge" style="--val:72" aria-label="수거망 충전율 72%">
+        <div class="gauge-inner">
+          <div class="gauge-value"><span id="fullnessText">72</span>%</div>
+          <div class="gauge-label">충전율</div>
+        </div>
+      </div>
+
+      <!-- 경고 배지(예: 85% 이상) : 필요 시 display 클래스를 제거해 보이게 -->
+      <div class="alert-badge hidden" id="alertBadge">⚠ 수거망이 85% 이상 찼습니다</div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="metric">
+      <span class="metric-label">YOLO 인식률</span>
+      <span class="metric-value">98%</span>
+    </div>
+  </footer>
+
+  <!-- ✍️ (선택) 정적 페이지에서도 간단히 숫자 동기화하려면 아래 값만 바꾸세요 -->
+  <script>
+    // 퍼센트 숫자를 게이지 안 텍스트에도 맞춰 넣어줌(수정은 위 gauge --val 만 바꾸면 됨)
+    (function () {
+      const gauge = document.querySelector('.gauge');
+      if (!gauge) return;
+      // --val 값을 읽어 텍스트에 표시
+      const style = getComputedStyle(gauge);
+      const raw = style.getPropertyValue('--val').trim();
+      const n = parseFloat(raw || '0');
+      document.getElementById('fullnessText').textContent = isFinite(n) ? Math.round(n) : 0;
+
+      // 85% 이상이면 경고 배지 노출 + 게이지 강조
+      if (n >= 85) {
+        document.getElementById('alertBadge').classList.remove('hidden');
+        gauge.classList.add('warn');
+      }
+    })();
+  </script>
+</body>
+</html>

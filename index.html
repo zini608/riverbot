@@ -4,91 +4,56 @@
   <meta charset="UTF-8">
   <title>RiverBot 대시보드</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 </head>
 <body>
-  <h1>🌊 RiverBot 실시간 대시보드</h1>
+  <h1>RiverBot 대시보드</h1>
 
-  <div class="container">
-    <!-- YOLO 인식률 -->
-    <div class="card">
-      <h2>YOLO 인식률</h2>
-      <div class="progress-bar">
-        <div class="progress-fill" id="yolo-bar"></div>
-      </div>
-      <p id="yolo-value">0%</p>
-    </div>
-
+  <div class="dashboard">
     <!-- 플라스틱 -->
     <div class="card">
-      <h2>플라스틱 수거망</h2>
-      <div class="gauge">
+      <h2>플라스틱 수거망 상태</h2>
+      <div class="gauge" style="--val:52; --color:#4CAF50;">
         <div class="gauge-inner">
-          <div id="plastic">0%</div>
-          <p>현재 수거율</p>
+          <div class="percent">52%</div>
+          <p>현재 수거량</p>
         </div>
+      </div>
+      <div class="yolo">
+        <p>YOLO 인식률</p>
+        <p class="yolo-val">98%</p>
       </div>
     </div>
 
-    <!-- 일반 쓰레기 -->
+    <!-- 일반쓰레기 -->
     <div class="card">
-      <h2>일반 쓰레기 수거망</h2>
-      <div class="gauge">
+      <h2>일반 쓰레기 수거망 상태</h2>
+      <div class="gauge" style="--val:44; --color:#2196F3;">
         <div class="gauge-inner">
-          <div id="general">0%</div>
-          <p>현재 수거율</p>
+          <div class="percent">44%</div>
+          <p>현재 수거량</p>
         </div>
+      </div>
+      <div class="yolo">
+        <p>YOLO 인식률</p>
+        <p class="yolo-val">98%</p>
       </div>
     </div>
 
     <!-- 금속 -->
     <div class="card">
-      <h2>금속 수거망</h2>
-      <div class="gauge">
+      <h2>금속 쓰레기 수거망 상태</h2>
+      <div class="gauge" style="--val:28; --color:#FF9800;">
         <div class="gauge-inner">
-          <div id="metal">0%</div>
-          <p>현재 수거율</p>
+          <div class="percent">28%</div>
+          <p>현재 수거량</p>
         </div>
+      </div>
+      <div class="yolo">
+        <p>YOLO 인식률</p>
+        <p class="yolo-val">98%</p>
       </div>
     </div>
   </div>
-
-  <script>
-    const client = mqtt.connect("wss://broker.hivemq.com:8000/mqtt");
-    client.on("connect", () => {
-      console.log("✅ MQTT Connected");
-      client.subscribe("riverbot/bin");
-    });
-
-    client.on("message", (topic, message) => {
-      try {
-        const data = JSON.parse(message.toString());
-        console.log("📩 수신:", data);
-
-        // YOLO 인식률
-        const yolo = parseFloat(data.yolo || 0).toFixed(1);
-        document.getElementById("yolo-bar").style.width = `${yolo}%`;
-        document.getElementById("yolo-value").innerText = `${yolo}%`;
-
-        // 플라스틱
-        const plastic = parseFloat(data.plastic || 0).toFixed(1);
-        document.getElementById("plastic").innerText = `${plastic}%`;
-        document.getElementById("plastic").parentElement.parentElement.style.background = `conic-gradient(#4CAF50 ${plastic}%, #ddd 0)`;
-
-        // 일반
-        const general = parseFloat(data.general || 0).toFixed(1);
-        document.getElementById("general").innerText = `${general}%`;
-        document.getElementById("general").parentElement.parentElement.style.background = `conic-gradient(#2196F3 ${general}%, #ddd 0)`;
-
-        // 금속
-        const metal = parseFloat(data.metal || 0).toFixed(1);
-        document.getElementById("metal").innerText = `${metal}%`;
-        document.getElementById("metal").parentElement.parentElement.style.background = `conic-gradient(#FF9800 ${metal}%, #ddd 0)`;
-
-      } catch (e) {
-        console.error(e);
-      }
-    });
-  </script>
 </body>
 </html>
+

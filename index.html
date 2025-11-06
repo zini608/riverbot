@@ -2,88 +2,58 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>RiverBot 실시간 대시보드</title>
+  <title>RiverBot 수거율 모니터</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
 </head>
 <body>
-  <header>
-    <h1>🌊 RiverBot 실시간 수거 상태</h1>
-  </header>
-
-  <main>
-    <canvas id="gauge"></canvas>
-    <div id="percent">0%</div>
-    <div id="alertBox"></div>
-    <div id="status">🕓 연결 상태: <span id="conn">연결 중...</span></div>
-  </main>
-
-  <footer>
-    <p>Connected via HiveMQ WebSocket (wss://broker.hivemq.com:8000)</p>
-  </footer>
+  <div class="container">
+    <h1>🌊 RiverBot 실시간 수거율</h1>
+    <p id="status">MQTT 연결 중...</p>
+    <div id="value">0%</div>
+    <p id="alert"></p>
+  </div>
 
   <script>
+    // ✅ HiveMQ WebSocket 설정
     const broker = "broker.hivemq.com";
     const port = 8000;
-    const topic = "riverbot/#";
+    const topic = "riverbot/#"; // ESP32에서 보낸 토픽
     const clientId = "webClient_" + Math.floor(Math.random() * 10000);
 
-    // 게이지 설정
-    const opts = {
-      angle: 0.15,
-      lineWidth: 0.3,
-      radiusScale: 1,
-      pointer: { length: 0.6, strokeWidth: 0.04, color: '#000' },
-      colorStart: '#6FADCF',
-      colorStop: '#8FC0DA',
-      strokeColor: '#E0E0E0',
-      generateGradient: true,
-      highDpiSupport: true
-    };
-    const target = document.getElementById('gauge');
-    const gauge = new Gauge(target).setOptions(opts);
-    gauge.maxValue = 100;
-    gauge.setMinValue(0);
-    gauge.animationSpeed = 32;
-    gauge.set(0);
+    const client = new Paho.MQTT.Client(broker, Number(port), clientId);
 
-    // MQTT 설정
-    const client = new Paho.MQTT.Client(broker, port, clientId);
-
-    client.onConnectionLost = (response) => {
-      document.getElementById("conn").innerText = "❌ 연결 끊김";
-      console.log("연결 끊김:", response.errorMessage);
+    client.onConnectionLost = (res) => {
+      document.getElementById("status").innerText = "❌ 연결 끊김";
+      console.log("연결 끊김:", res.errorMessage);
     };
 
-    client.onMessageArrived = (message) => {
-      console.log("📩 수신:", message.payloadString);
+    client.onMessageArrived = (msg) => {
+      console.log("📩 수신:", msg.payloadString);
       try {
-        const data = JSON.parse(message.payloadString);
+        const data = JSON.parse(msg.payloadString);
         if (data.collection !== undefined) {
-          gauge.set(data.collection);
-          document.getElementById("percent").innerText = data.collection.toFixed(1) + "%";
+          document.getElementById("value").innerText = data.collection.toFixed(1) + "%";
         }
-        if (data.alert !== undefined) {
-          document.getElementById("alertBox").innerText = data.alert;
+        if (data.alert) {
+          document.getElementById("alert").innerText = data.alert;
         } else {
-          document.getElementById("alertBox").innerText = "";
+          document.getElementById("alert").innerText = "";
         }
       } catch (e) {
-        console.log("❗ JSON 파싱 오류:", e);
+        console.error("JSON 파싱 오류:", e);
       }
     };
 
-    // 연결
     client.connect({
       useSSL: false,
       onSuccess: () => {
-        document.getElementById("conn").innerText = "✅ 연결 성공";
+        document.getElementById("status").innerText = "✅ 연결 성공";
         console.log("✅ HiveMQ 연결 성공");
         client.subscribe(topic);
       },
       onFailure: (err) => {
-        document.getElementById("conn").innerText = "❌ 연결 실패";
+        document.getElementById("status").innerText = "❌ 연결 실패";
         console.error("❌ 연결 실패:", err.errorMessage);
       }
     });

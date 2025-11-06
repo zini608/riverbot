@@ -52,11 +52,11 @@
         </div>
       </div>
 
-      <div class="status-card">
+      <div class="status-card" id="trash-card">
         <h3>일반 쓰레기 수거량</h3>
-        <div class="gauge" style="--val:44; --color:#2196F3;">
+        <div class="gauge" id="trash-gauge" style="--val:44; --color:#2196F3;">
           <div class="gauge-inner">
-            <div class="percent">44%</div>
+            <div class="percent" id="trash-percent">44%</div>
             <p>현재 수거율</p>
           </div>
         </div>
@@ -84,7 +84,7 @@
   </footer>
 
   <script>
-    // 그래프
+    // === 그래프 ===
     const ctx = document.getElementById('plasticChart').getContext('2d');
     new Chart(ctx, {
       type: 'line',
@@ -111,20 +111,47 @@
       }
     });
 
-    // 클릭 시 사진 + 텍스트 변경
+    // === 클릭 시 사진 + 텍스트 + 퍼센트 변경 ===
+    let isPlastic = true;
+
     function toggleTrashType() {
       const img = document.getElementById('trashImage');
       const typeText = document.getElementById('trash-type');
+      const percentElem = document.getElementById('trash-percent');
+      const gauge = document.getElementById('trash-gauge');
 
-      if (img.src.includes('ntr202309190020')) {
+      if (isPlastic) {
+        // 플라스틱 → 일반쓰레기
         img.src = 'KakaoTalk_20251107_031923454.jpg';
         typeText.textContent = '일반쓰레기';
+        animatePercentChange(percentElem, gauge, 44, 46, '#2196F3');
       } else {
+        // 일반쓰레기 → 플라스틱
         img.src = 'ntr202309190020.680x.0.jpg';
         typeText.textContent = '플라스틱';
+        animatePercentChange(percentElem, gauge, 46, 44, '#2196F3');
       }
+
+      isPlastic = !isPlastic;
+    }
+
+    // === 부드러운 수치 변경 함수 ===
+    function animatePercentChange(elem, gauge, from, to, color) {
+      let current = from;
+      const step = from < to ? 0.2 : -0.2;
+      const interval = setInterval(() => {
+        current += step;
+        elem.textContent = current.toFixed(1) + '%';
+        gauge.style.setProperty('--val', current);
+        gauge.style.setProperty('--color', color);
+
+        if ((step > 0 && current >= to) || (step < 0 && current <= to)) {
+          elem.textContent = Math.round(to) + '%';
+          gauge.style.setProperty('--val', to);
+          clearInterval(interval);
+        }
+      }, 30);
     }
   </script>
 </body>
 </html>
-

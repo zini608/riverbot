@@ -180,3 +180,68 @@ canvas {
   width: 100%;
   max-height: 220px;
 }
+
+/* 전체 스타일 기본은 이전과 동일, 아래 추가/수정 부분 포함 */
+
+/* GPS 박스 */
+.gps-box {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  padding: 20px;
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.25s ease-in-out;
+}
+.gps-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.map-area {
+  width: 220px;
+  height: 130px;
+  background: linear-gradient(135deg,#f1f3f4,#e5e8eb);
+  border-radius: 10px;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.map-pin {
+  width: 16px;
+  height: 16px;
+  background: #ff3b30;
+  border-radius: 50%;
+  position: absolute;
+  top: 60%;
+  left: 40%;
+  transform: translate(-50%,-50%);
+  border: 2px solid #fff;
+  box-shadow: 0 0 6px rgba(255,59,48,0.6);
+}
+
+.gps-text {
+  font-weight: 600;
+  color: #0a2540;
+  font-size: 14px;
+}
+
+/* YOLO 카드 축소 */
+.status-card.small {
+  padding: 15px;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.status-card.small h3 {
+  font-size: 14px;
+  margin: 0;
+}
+.status-card.small .yolo-val {
+  font-size: 22px;
+  margin-top: 6px;
+}
+

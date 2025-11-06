@@ -245,3 +245,58 @@ canvas {
   margin-top: 6px;
 }
 
+/* 지도 컨테이너 (그래프와 동일한 크기 스타일) */
+.gps-container {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 20px;
+  margin-top: 25px;
+  transition: all 0.25s ease-in-out;
+}
+.gps-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+}
+.gps-container h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0a2540;
+  margin-bottom: 15px;
+}
+
+/* 지도 이미지 */
+.map-area {
+  width: 100%;
+  height: 240px;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.map-background {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 빨간 점 */
+.map-pin {
+  width: 18px;
+  height: 18px;
+  background: #ff3b30;
+  border-radius: 50%;
+  position: absolute;
+  top: 60%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+  box-shadow: 0 0 8px rgba(255, 59, 48, 0.7);
+}
+
+.gps-text {
+  text-align: center;
+  font-weight: 600;
+  color: #0a2540;
+  font-size: 14px;
+  margin-top: 12px;
+}

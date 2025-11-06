@@ -10,54 +10,50 @@
     <h1>RiverBot 대시보드</h1>
   </header>
 
-  <main class="dashboard">
-    <!-- 플라스틱 -->
-    <div class="card">
-      <h2>플라스틱 수거망</h2>
-      <img src="ntr202309190020.680x.0.jpg" alt="플라스틱 병" class="trash-img">
-      <div class="gauge" style="--val:52; --color:#4CAF50;">
-        <div class="gauge-inner">
-          <div class="percent">52%</div>
-          <p>현재 수거율</p>
-        </div>
-      </div>
-      <div class="yolo">
-        <p>YOLO 인식률</p>
-        <p class="yolo-val">98%</p>
-      </div>
-    </div>
+  <main class="main-container">
+    <!-- 왼쪽: 인식 결과 -->
+    <section class="left-panel">
+      <h2>현재 인식 중: <span class="highlight">플라스틱</span></h2>
+      <img src="ntr202309190020.680x.0.jpg" alt="플라스틱 쓰레기" class="trash-photo">
+    </section>
 
-    <!-- 일반 쓰레기 -->
-    <div class="card">
-      <h2>일반 쓰레기 수거망</h2>
-      <img src="https://cdn-icons-png.flaticon.com/512/365/365969.png" alt="일반 쓰레기" class="trash-img">
-      <div class="gauge" style="--val:44; --color:#2196F3;">
-        <div class="gauge-inner">
-          <div class="percent">44%</div>
-          <p>현재 수거율</p>
+    <!-- 오른쪽: 수거 상태 -->
+    <section class="right-panel">
+      <div class="status-card">
+        <h3>플라스틱 수거량</h3>
+        <div class="gauge" style="--val:52; --color:#4CAF50;">
+          <div class="gauge-inner">
+            <div class="percent">52%</div>
+            <p>현재 수거율</p>
+          </div>
         </div>
       </div>
-      <div class="yolo">
-        <p>YOLO 인식률</p>
-        <p class="yolo-val">98%</p>
-      </div>
-    </div>
 
-    <!-- 금속 쓰레기 -->
-    <div class="card">
-      <h2>금속 쓰레기 수거망</h2>
-      <img src="https://cdn-icons-png.flaticon.com/512/7432/7432154.png" alt="금속 쓰레기" class="trash-img">
-      <div class="gauge" style="--val:28; --color:#FF9800;">
-        <div class="gauge-inner">
-          <div class="percent">28%</div>
-          <p>현재 수거율</p>
+      <div class="status-card">
+        <h3>일반 쓰레기 수거량</h3>
+        <div class="gauge" style="--val:44; --color:#2196F3;">
+          <div class="gauge-inner">
+            <div class="percent">44%</div>
+            <p>현재 수거율</p>
+          </div>
         </div>
       </div>
-      <div class="yolo">
-        <p>YOLO 인식률</p>
+
+      <div class="status-card">
+        <h3>금속 쓰레기 수거량</h3>
+        <div class="gauge" style="--val:28; --color:#FF9800;">
+          <div class="gauge-inner">
+            <div class="percent">28%</div>
+            <p>현재 수거율</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-card">
+        <h3>YOLO 인식률</h3>
         <p class="yolo-val">98%</p>
       </div>
-    </div>
+    </section>
   </main>
 
   <footer>
@@ -65,4 +61,3 @@
   </footer>
 </body>
 </html>
-

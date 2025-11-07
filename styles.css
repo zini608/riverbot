@@ -361,3 +361,21 @@ canvas {
   from { transform: scale(0.9); opacity: 0.5; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* 클릭 안내 문구 */
+.click-guide {
+  font-size: 16px;
+  color: #666;
+  margin-top: -5px;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+/* 그래프 제목 */
+.graph-container h3 {
+  font-size: 20px;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+

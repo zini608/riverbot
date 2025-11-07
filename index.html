@@ -15,6 +15,7 @@
     <!-- 왼쪽 -->
     <section class="left-panel">
       <h2 id="detect-title">현재 인식 중: <span class="highlight" id="trash-type">플라스틱</span></h2>
+      <p class="click-guide">5번 클릭해주세요 🙂</p>
       
       <img id="trashImage" 
            src="ntr202309190020.680x.0.jpg" 
@@ -24,7 +25,7 @@
 
       <!-- 그래프 -->
       <div class="graph-container">
-        <h3>시간별 플라스틱 수거량 (톤)</h3>
+        <h3>실시간 쓰레기 수거량</h3>
         <canvas id="plasticChart"></canvas>
       </div>
 
@@ -121,7 +122,6 @@
 
     // === 상태 ===
     let currentStage = 0; 
-    // 0: 플라스틱, 1: 일반쓰레기, 2~4: 금속 단계
 
     const img = document.getElementById('trashImage');
     const typeText = document.getElementById('trash-type');
@@ -139,36 +139,27 @@
 
     function toggleTrashType() {
       if (currentStage === 0) {
-        // 플라스틱 → 일반쓰레기
         img.src = "KakaoTalk_20251107_031923454.jpg";
         typeText.textContent = "일반쓰레기";
         animateGaugeChange(trashPercent, trashGauge, 44, 46, '#2196F3');
       } 
       else if (currentStage === 1) {
-        // 일반쓰레기 → 금속 (1단계)
         img.src = metalImages[0];
         typeText.textContent = "금속쓰레기";
         animateGaugeChange(metalPercent, metalGauge, 28, 48, '#FF9800');
       } 
       else if (currentStage === 2) {
-        // 금속 2단계
         img.src = metalImages[1];
         typeText.textContent = "금속쓰레기";
         animateGaugeChange(metalPercent, metalGauge, 48, 68, '#FF9800');
       } 
       else if (currentStage === 3) {
-        // 금속 3단계
         img.src = metalImages[2];
         typeText.textContent = "금속쓰레기";
         animateGaugeChange(metalPercent, metalGauge, 68, 88, '#FF9800');
-
-        // 모달 띄우기 (2초 후)
-        setTimeout(() => {
-          modal.style.display = "flex";
-        }, 800);
+        setTimeout(() => { modal.style.display = "flex"; }, 800);
       } 
       else if (currentStage >= 4) {
-        // 리셋 (처음으로)
         img.src = "ntr202309190020.680x.0.jpg";
         typeText.textContent = "플라스틱";
         animateGaugeChange(metalPercent, metalGauge, 88, 28, '#FF9800');
@@ -176,7 +167,6 @@
         modal.style.display = "none";
         currentStage = -1;
       }
-
       currentStage++;
     }
 
@@ -203,4 +193,3 @@
   </script>
 </body>
 </html>
-
